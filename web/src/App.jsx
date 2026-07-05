@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import './index.css'; 
+import React, { useState, useMemo } from 'react';
+import './index.css';
 import RecipeDetail from './RecipeDetail';
 
-// Muted, sophisticated "IDE Dark Theme" colors (No Neons!)
+// Monochrome-blue "terminal" palette -- every accent is a shade of blue
 const colors = {
-  rose: '#9E3E43',    // Muted Brick Red
-  sage: '#4B6E59',    // Muted Forest Green
-  ochre: '#B8863A',   // Dark Mustard
-  terra: '#A65D37',   // Burnt Rust/Orange
-  slate: '#4A6B8C',   // Muted Steel Blue
-  dark: '#24272B',    // Soft Charcoal (for 'Hepsi' button)
+  ice: '#A9E2FF',    // pale ice-blue -> desserts
+  teal: '#2FD6C9',   // blue-teal -> mezze
+  deep: '#4C6FFF',   // indigo-blue -> olive-oil dishes
+  steel: '#6B87A6',  // muted steel-blue -> meat dishes
+  cyan: '#22D3EE',   // bright cyan -> drinks
+  brand: '#3AA0FF',  // electric blue -> "all"
 };
 
 const allRecipes = [
-  { 
-    id: 1, 
-    title: 'Gerçek Fırın Sütlaç', 
-    category: 'TATLILAR', 
-    color: colors.rose,
+  {
+    id: 1,
+    title: 'Gerçek Fırın Sütlaç',
+    category: 'TATLILAR',
+    color: colors.ice,
     time: '45 dk',
-    image: '/firinda-sutlac.png', 
+    image: '/firinda-sutlac.png',
     ingredients: [
       '1 litre süt',
       '1 çay bardağı pirinç',
@@ -36,13 +36,13 @@ const allRecipes = [
       'Sütlacı güveç kaplarına paylaştırıp, fırın tepsisine diziyorum. Tepsinin yarısına kadar soğuk su ekleyip, 200 derece fırının sadece üst ızgarasında üstleri kızarana kadar pişiriyorum.'
     ]
   },
-  { 
-    id: 2, 
-    title: 'Çakma Tiramisu :)', 
-    category: 'TATLILAR', 
-    color: colors.rose,
+  {
+    id: 2,
+    title: 'Çakma Tiramisu :)',
+    category: 'TATLILAR',
+    color: colors.ice,
     time: '30 dk',
-    image: '/cakma-tiramisu.png', 
+    image: '/cakma-tiramisu.png',
     ingredients: [
       '1 litre süt',
       '3 yumurta sarısı',
@@ -64,117 +64,180 @@ const allRecipes = [
       'Sabaha (veya servisten hemen önce) hazırladığım kahve-kakao tozunu üstüne atıyorum. Hazırrr! :)'
     ]
   },
-  { id: 3, title: 'Süzme Haydari', category: 'MEZELER', color: colors.sage, time: '15 dk', image: '' },
-  { id: 4, title: 'Zeytinyağlı Enginar', category: 'ZEYTİNYAĞLILAR', color: colors.ochre, time: '40 dk', image: '' },
+  { id: 3, title: 'Süzme Haydari', category: 'MEZELER', color: colors.teal, time: '15 dk', image: '' },
+  { id: 4, title: 'Zeytinyağlı Enginar', category: 'ZEYTİNYAĞLILAR', color: colors.deep, time: '40 dk', image: '' },
 ];
 
 const categories = [
-  { id: 'HEPSİ', color: colors.dark },
-  { id: 'TATLILAR', color: colors.rose },
-  { id: 'MEZELER', color: colors.sage },
-  { id: 'ZEYTİNYAĞLILAR', color: colors.ochre },
-  { id: 'ET YEMEKLERİ', color: colors.terra },
-  { id: 'İÇECEKLER', color: colors.slate },
+  { id: 'HEPSİ', color: colors.brand },
+  { id: 'TATLILAR', color: colors.ice },
+  { id: 'MEZELER', color: colors.teal },
+  { id: 'ZEYTİNYAĞLILAR', color: colors.deep },
+  { id: 'ET YEMEKLERİ', color: colors.steel },
+  { id: 'İÇECEKLER', color: colors.cyan },
 ];
 
-const PixelMascot = () => (
+// A small, original floating companion -- glowing orb with a sparkle trail.
+// Not modeled on any specific character; just a quiet nod to that "cozy magic" vibe.
+const SpiritCompanion = () => (
   <div className="mascot-container">
-    <svg viewBox="0 0 100 100" width="100" height="100">
-      <rect x="10" y="15" width="80" height="65" fill="#3B4252" />
-      <rect x="15" y="20" width="70" height="55" fill="#2E3440" />
-      <rect x="30" y="35" width="8" height="8" fill="#88C0D0" className="pixel-eye" />
-      <rect x="62" y="35" width="8" height="8" fill="#88C0D0" className="pixel-eye" />
-      <rect x="45" y="55" width="10" height="4" fill="#A3BE8C" />
-      <rect x="40" y="80" width="20" height="10" fill="#3B4252" />
-      <rect x="25" y="90" width="50" height="5" fill="#3B4252" />
+    <svg viewBox="0 0 100 100" width="92" height="92">
+      <defs>
+        <radialGradient id="spiritBody" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stopColor="#EAF6FF" />
+          <stop offset="55%" stopColor="#3AA0FF" />
+          <stop offset="100%" stopColor="#153E75" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="50" cy="58" rx="30" ry="26" fill="url(#spiritBody)" />
+      <ellipse cx="50" cy="34" rx="4" ry="10" fill="#153E75" opacity="0.7" />
+      <circle cx="38" cy="56" r="4.5" fill="#05070d" className="spirit-eye" />
+      <circle cx="62" cy="56" r="4.5" fill="#05070d" className="spirit-eye" />
+      <path d="M42 68 Q50 74 58 68" stroke="#05070d" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      <circle cx="20" cy="30" r="2.5" fill="#22D3EE" className="spirit-sparkle" />
+      <circle cx="80" cy="20" r="2" fill="#A9E2FF" className="spirit-sparkle" style={{ animationDelay: '0.8s' }} />
+      <circle cx="78" cy="70" r="1.8" fill="#2FD6C9" className="spirit-sparkle" style={{ animationDelay: '1.5s' }} />
     </svg>
   </div>
 );
+
+// Sakura petals drifting in the background -- quiet ambience, not a costume.
+const Petals = () => {
+  const petals = useMemo(
+    () =>
+      Array.from({ length: 10 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 14,
+        duration: 12 + Math.random() * 10,
+      })),
+    []
+  );
+
+  return (
+    <>
+      {petals.map((p) => (
+        <span
+          key={p.id}
+          className="petal"
+          style={{
+            left: `${p.left}vw`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+          }}
+        />
+      ))}
+    </>
+  );
+};
 
 function App() {
   const [activeCategory, setActiveCategory] = useState('HEPSİ');
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  const filteredRecipes = activeCategory === 'HEPSİ' 
-    ? allRecipes 
+  const filteredRecipes = activeCategory === 'HEPSİ'
+    ? allRecipes
     : allRecipes.filter(r => r.category === activeCategory);
+
+  // 3D holo-card tilt, driven by cursor position
+  const handleTilt = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const rotateX = ((y / rect.height) - 0.5) * -12;
+    const rotateY = ((x / rect.width) - 0.5) * 12;
+    card.style.setProperty('--rx', `${rotateX}deg`);
+    card.style.setProperty('--ry', `${rotateY}deg`);
+    card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+    card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+  };
+
+  const resetTilt = (e) => {
+    const card = e.currentTarget;
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  };
 
   return (
     <div className="app-container">
-      <PixelMascot />
-    
-      <nav className="dark-nav">
-        <a href="/" className="nav-logo" onClick={(e) => { 
-          e.preventDefault(); 
-          setSelectedRecipe(null); 
-          setActiveCategory('HEPSİ'); // Resets to show all recipes
+      <div className="bg-aurora" />
+      <div className="bg-grid" />
+      <Petals />
+      <SpiritCompanion />
+
+      <nav className="dark-nav enter" style={{ '--d': '0ms' }}>
+        <a href="/" className="nav-logo" onClick={(e) => {
+          e.preventDefault();
+          setSelectedRecipe(null);
+          setActiveCategory('HEPSİ');
         }}>
           <h1 className="logo-title">TATLAR_DEFTERI</h1>
-          <span className="logo-subtitle">// OZLEDIGIM LEZZETLER</span>
+          <span className="logo-subtitle">// ozledigim ve unutmamam gereken lezzetler</span>
         </a>
         <ul className="nav-links">
-          
-          {/* 1. KOLEKSIYON: Now closes any open recipe AND resets the filter to 'HEPSİ' */}
           <li onClick={() => {
             setSelectedRecipe(null);
             setActiveCategory('HEPSİ');
           }}>KOLEKSIYON</li>
-
-          {/* 2. HAKKIMDA & ILETISIM: Added temporary alerts so they "work" */}
           <li onClick={() => alert("Hakkımda sayfası yakında kodlanacak! 👾")}>HAKKIMDA</li>
           <li onClick={() => alert("İletişim sayfası yakında kodlanacak! 👾")}>ILETISIM</li>
-          
         </ul>
       </nav>
 
       {selectedRecipe ? (
-        <RecipeDetail 
-          recipe={selectedRecipe} 
-          onBack={() => setSelectedRecipe(null)} 
+        <RecipeDetail
+          recipe={selectedRecipe}
+          onBack={() => setSelectedRecipe(null)}
         />
       ) : (
         <>
-          <div className="category-pills">
-            {categories.map(cat => (
-              <div 
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`pill ${activeCategory === cat.id ? 'active' : ''}`}
-                style={{
-                  backgroundColor: activeCategory === cat.id ? cat.color : '#2B2F36',
-                  borderColor: activeCategory === cat.id ? cat.color : '#4A505C',
-                  color: activeCategory === cat.id ? '#F8F9FA' : '#A0AABF'
-                }}
-              >
-                {cat.id}
-              </div>
-            ))}
+          <div className="route-wrapper enter" style={{ '--d': '120ms' }}>
+            <div className="category-pills">
+              {categories.map((cat, i) => (
+                <div
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`pill ${activeCategory === cat.id ? 'active' : ''}`}
+                  style={{
+                    backgroundColor: activeCategory === cat.id ? `${cat.color}22` : '#0c121c',
+                    borderColor: activeCategory === cat.id ? cat.color : '#1c2b3d',
+                    color: activeCategory === cat.id ? cat.color : '#7d8ba0',
+                  }}
+                >
+                  {cat.id}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="recipe-grid">
-            {filteredRecipes.map((recipe) => (
-              <div 
-                key={recipe.id} 
-                className="recipe-card"
+            {filteredRecipes.map((recipe, i) => (
+              <div
+                key={recipe.id}
+                className="recipe-card enter"
+                style={{ '--glow': recipe.color, '--d': `${180 + i * 70}ms` }}
                 onClick={() => setSelectedRecipe(recipe)}
+                onMouseMove={handleTilt}
+                onMouseLeave={resetTilt}
               >
-                <div 
-                  className="card-image-area" 
-                  style={{ 
-                    backgroundColor: recipe.color,
+                <div
+                  className="card-image-area"
+                  style={{
+                    backgroundColor: recipe.image ? '#1a1a26' : recipe.color,
                     backgroundImage: recipe.image ? `url(${recipe.image})` : 'none',
                   }}
                 ></div>
-                
+
                 <div className="card-content">
-                  <div 
-                    className="card-category-tag" 
+                  <div
+                    className="card-category-tag"
                     style={{ backgroundColor: recipe.color }}
                   >
                     {recipe.category}
                   </div>
                   <h3 className="card-title">{recipe.title}</h3>
-                  
+
                   <div className="card-footer">
                     <span>✦ HAZIRLAMA: {recipe.time}</span>
                   </div>
@@ -184,7 +247,7 @@ function App() {
           </div>
         </>
       )}
-      
+
     </div>
   );
 }
