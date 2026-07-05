@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import './index.css'; 
-import RecipeDetail from './RecipeDetail'; // Detay sayfasını içeri alıyoruz
+import RecipeDetail from './RecipeDetail';
 
-// Sophisticated Color Palette
+// Muted, sophisticated "IDE Dark Theme" colors (No Neons!)
 const colors = {
-  rose: '#D98A8A',    // Dusty Rose
-  sage: '#8B9D77',    // Sage Olive
-  ochre: '#D4A373',   // Muted Mustard
-  terra: '#C06C5B',   // Terracotta
-  slate: '#7A90A4',   // Slate Blue
-  dark: '#2C2C2C',    // Dark Charcoal
+  rose: '#9E3E43',    // Muted Brick Red
+  sage: '#4B6E59',    // Muted Forest Green
+  ochre: '#B8863A',   // Dark Mustard
+  terra: '#A65D37',   // Burnt Rust/Orange
+  slate: '#4A6B8C',   // Muted Steel Blue
+  dark: '#24272B',    // Soft Charcoal (for 'Hepsi' button)
 };
 
 const allRecipes = [
   { 
     id: 1, 
     title: 'Gerçek Fırın Sütlaç', 
-    category: 'Tatlılar', 
+    category: 'TATLILAR', 
     color: colors.rose,
     time: '45 dk',
     image: '/firinda-sutlac.png', 
@@ -39,7 +39,7 @@ const allRecipes = [
   { 
     id: 2, 
     title: 'Çakma Tiramisu :)', 
-    category: 'Tatlılar', 
+    category: 'TATLILAR', 
     color: colors.rose,
     time: '30 dk',
     image: '/cakma-tiramisu.png', 
@@ -64,55 +64,69 @@ const allRecipes = [
       'Sabaha (veya servisten hemen önce) hazırladığım kahve-kakao tozunu üstüne atıyorum. Hazırrr! :)'
     ]
   },
-  
-  { id: 3, title: 'Süzme Haydari', category: 'Mezeler', color: colors.sage, time: '15 dk' },
-  { id: 4, title: 'Zeytinyağlı Enginar', category: 'Zeytinyağlılar', color: colors.ochre, time: '40 dk' },
-  { id: 5, title: 'Ali Nazik Kebabı', category: 'Et Yemekleri', color: colors.terra, time: '60 dk' },
-  { id: 6, title: 'Reyhan Şerbeti', category: 'İçecekler', color: colors.slate, time: '20 dk' },
-  { id: 7, title: 'Tahinli Humus', category: 'Mezeler', color: colors.sage, time: '25 dk' },
+  { id: 3, title: 'Süzme Haydari', category: 'MEZELER', color: colors.sage, time: '15 dk', image: '' },
+  { id: 4, title: 'Zeytinyağlı Enginar', category: 'ZEYTİNYAĞLILAR', color: colors.ochre, time: '40 dk', image: '' },
 ];
 
 const categories = [
-  { id: 'Hepsi', color: colors.dark },
-  { id: 'Tatlılar', color: colors.rose },
-  { id: 'Mezeler', color: colors.sage },
-  { id: 'Zeytinyağlılar', color: colors.ochre },
-  { id: 'Et Yemekleri', color: colors.terra },
-  { id: 'İçecekler', color: colors.slate },
+  { id: 'HEPSİ', color: colors.dark },
+  { id: 'TATLILAR', color: colors.rose },
+  { id: 'MEZELER', color: colors.sage },
+  { id: 'ZEYTİNYAĞLILAR', color: colors.ochre },
+  { id: 'ET YEMEKLERİ', color: colors.terra },
+  { id: 'İÇECEKLER', color: colors.slate },
 ];
 
-function App() {
-  const [activeCategory, setActiveCategory] = useState('Hepsi');
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // Hangi tarifin açık olduğunu tutar
+const PixelMascot = () => (
+  <div className="mascot-container">
+    <svg viewBox="0 0 100 100" width="100" height="100">
+      <rect x="10" y="15" width="80" height="65" fill="#3B4252" />
+      <rect x="15" y="20" width="70" height="55" fill="#2E3440" />
+      <rect x="30" y="35" width="8" height="8" fill="#88C0D0" className="pixel-eye" />
+      <rect x="62" y="35" width="8" height="8" fill="#88C0D0" className="pixel-eye" />
+      <rect x="45" y="55" width="10" height="4" fill="#A3BE8C" />
+      <rect x="40" y="80" width="20" height="10" fill="#3B4252" />
+      <rect x="25" y="90" width="50" height="5" fill="#3B4252" />
+    </svg>
+  </div>
+);
 
-  const filteredRecipes = activeCategory === 'Hepsi' 
+function App() {
+  const [activeCategory, setActiveCategory] = useState('HEPSİ');
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  const filteredRecipes = activeCategory === 'HEPSİ' 
     ? allRecipes 
     : allRecipes.filter(r => r.category === activeCategory);
 
   return (
     <div className="app-container">
-      
-      {/* 1. ELEGANT FLOATING NAV BAR WITH NEW TITLE (Burası her zaman üstte kalır) */}
-      <nav className="elegant-nav">
-        <a 
-          href="/" 
-          className="nav-logo" 
-          onClick={(e) => {
-            e.preventDefault(); 
-            setSelectedRecipe(null); // Logoya tıklayınca ana sayfaya döner
-          }}
-        >
-          Tatlar Defteri
-          <span className="logo-subtitle">Özlediğim ve unutmamam gereken lezzetler</span>
+      <PixelMascot />
+    
+      <nav className="dark-nav">
+        <a href="/" className="nav-logo" onClick={(e) => { 
+          e.preventDefault(); 
+          setSelectedRecipe(null); 
+          setActiveCategory('HEPSİ'); // Resets to show all recipes
+        }}>
+          <h1 className="logo-title">TATLAR_DEFTERI</h1>
+          <span className="logo-subtitle">// OZLEDIGIM LEZZETLER</span>
         </a>
         <ul className="nav-links">
-          <li onClick={() => setSelectedRecipe(null)}>Koleksiyon</li>
-          <li>Hakkımda</li>
-          <li>İletişim</li>
+          
+          {/* 1. KOLEKSIYON: Now closes any open recipe AND resets the filter to 'HEPSİ' */}
+          <li onClick={() => {
+            setSelectedRecipe(null);
+            setActiveCategory('HEPSİ');
+          }}>KOLEKSIYON</li>
+
+          {/* 2. HAKKIMDA & ILETISIM: Added temporary alerts so they "work" */}
+          <li onClick={() => alert("Hakkımda sayfası yakında kodlanacak! 👾")}>HAKKIMDA</li>
+          <li onClick={() => alert("İletişim sayfası yakında kodlanacak! 👾")}>ILETISIM</li>
+          
         </ul>
       </nav>
 
-      {/* TARİF SEÇİLDİYSE DETAY SAYFASINI, SEÇİLMEDİYSE SENİN LİSTENİ GÖSTER */}
       {selectedRecipe ? (
         <RecipeDetail 
           recipe={selectedRecipe} 
@@ -120,60 +134,51 @@ function App() {
         />
       ) : (
         <>
-          {/* 2. TASTEFUL CATEGORY PILLS (Senin orijinal kodun) */}
           <div className="category-pills">
-            {categories.map(cat => {
-              const isActive = activeCategory === cat.id;
-              return (
-                <div 
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`pill ${isActive ? 'active' : ''}`}
-                  style={{ 
-                    backgroundColor: isActive ? cat.color : 'transparent',
-                    borderColor: isActive ? cat.color : '#E5E0D8',
-                    color: isActive ? 'white' : '#666'
-                  }}
-                >
-                  {cat.id}
-                </div>
-              );
-            })}
+            {categories.map(cat => (
+              <div 
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`pill ${activeCategory === cat.id ? 'active' : ''}`}
+                style={{
+                  backgroundColor: activeCategory === cat.id ? cat.color : '#2B2F36',
+                  borderColor: activeCategory === cat.id ? cat.color : '#4A505C',
+                  color: activeCategory === cat.id ? '#F8F9FA' : '#A0AABF'
+                }}
+              >
+                {cat.id}
+              </div>
+            ))}
           </div>
 
-          {/* 3. ELEGANT RECIPE CARDS (Senin orijinal kodun, tıklanabilirlik eklendi) */}
           <div className="recipe-grid">
             {filteredRecipes.map((recipe) => (
               <div 
                 key={recipe.id} 
                 className="recipe-card"
-                onClick={() => setSelectedRecipe(recipe)} // Karta tıklayınca açılması için eklendi
+                onClick={() => setSelectedRecipe(recipe)}
               >
-                
                 <div 
                   className="card-image-area" 
                   style={{ 
                     backgroundColor: recipe.color,
-                    backgroundImage: recipe.image ? `url(${recipe.image})` : 'none', // Resim varsa göster
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundImage: recipe.image ? `url(${recipe.image})` : 'none',
                   }}
                 ></div>
                 
                 <div className="card-content">
                   <div 
                     className="card-category-tag" 
-                    style={{ color: recipe.color }}
+                    style={{ backgroundColor: recipe.color }}
                   >
                     {recipe.category}
                   </div>
                   <h3 className="card-title">{recipe.title}</h3>
                   
                   <div className="card-footer">
-                    <span>✦ Hazırlama: {recipe.time}</span>
+                    <span>✦ HAZIRLAMA: {recipe.time}</span>
                   </div>
                 </div>
-
               </div>
             ))}
           </div>
