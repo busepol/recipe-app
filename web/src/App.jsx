@@ -19,7 +19,7 @@ const allRecipes = [
     category: 'Tatlılar', 
     color: colors.rose,
     time: '45 dk',
-    image: 'public/firinda-sutlac.jpg', 
+    image: '/firinda-sutlac.png', 
     ingredients: [
       '1 litre süt',
       '1 çay bardağı pirinç',
@@ -42,7 +42,7 @@ const allRecipes = [
     category: 'Tatlılar', 
     color: colors.rose,
     time: '30 dk',
-    image: 'public/cakma-tiramisu.jpg', 
+    image: '/cakma-tiramisu.png', 
     ingredients: [
       '1 litre süt',
       '3 yumurta sarısı',
